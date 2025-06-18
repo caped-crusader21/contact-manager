@@ -1,5 +1,3 @@
-Here’s a polished and helpful **README** for the **Contact Manager** repository on GitHub:
-
 ---
 
 # 📇 Contact Manager
@@ -181,5 +179,3 @@ Delete your contact
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
-
-Let me know if you'd like help adding Postman examples, deployment scripts, Docker support, test suites, or Swagger specs!
