@@ -1,44 +1,44 @@
-// middleware is a function or a component that acts as a bridge between the incoming request and the final response. 
-// It can intercept, modify, or handle requests/responses before they reach the final handler or after they leave it.
-// FIX THIS ASAP
-const {constants}=require('../errorConstants.js')
-const errorHandler=(error, request,response,next)=>{
-    const statusCode= response.statusCode?response.statusCode:500;
+const { constants } = require("../errorConstants.js");
 
-    switch (statusCode) {
-        case constants.VALIDATION_ERROR:
-            response.json({
-                title:"Validation Error",
-                message:error.message, 
-                stackTrace:error.stack
-            });
-            break;
-        case constants.UNAUTHORIZED:
-            response.json({
-                title:"Unauthorized Access",
-                message:error.message, 
-                stackTrace:error.stack
-            });
-            break;
-        case constants.FORBIDDEN:
-            response.json({
-                title:"Forbidden Access",
-                message:error.message, 
-                stackTrace:error.stack
-            });
-            break;  
-        case constants.NOT_FOUND:
-            response.json({
-                title:"Not Found",
-                message:error.message, 
-                stackTrace:error.stack
-            });
-            break;   
-        default: console.log("No errors! Ok")
-            break;
-    }
+const errorHandler = (error, request, response, next) => {
+  const statusCode = response.statusCode && response.statusCode !== 200 ? response.statusCode : 500;
 
-    response.json({message:error.message , stackTrace:error.stack})
-}
+  switch (statusCode) {
+    case constants.VALIDATION_ERROR:
+      return response.status(statusCode).json({ 
+        title: "Validation Error",
+        message: error.message,
+        stackTrace: error.stack,
+      });
 
-module.exports=errorHandler;
+    case constants.UNAUTHORIZED:
+      return response.status(statusCode).json({
+        title: "Unauthorized Access",
+        message: error.message,
+        stackTrace: error.stack,
+      });
+
+    case constants.FORBIDDEN:
+      return response.status(statusCode).json({
+        title: "Forbidden Access",
+        message: error.message,
+        stackTrace: error.stack,
+      });
+
+    case constants.NOT_FOUND:
+      return response.status(statusCode).json({
+        title: "Not Found",
+        message: error.message,
+        stackTrace: error.stack,
+      });
+
+    default:
+      return response.status(statusCode).json({
+        title: "Server Error",
+        message: error.message,
+        stackTrace: error.stack,
+      });
+  }
+};
+
+module.exports = errorHandler;

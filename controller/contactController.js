@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModel");
 
 const getContacts = asyncHandler(async (request, response) => {
-  const contacts = await Contact.find();
+  const contacts = await Contact.find({ user_id: request.user.id });
   response.status(200).json(contacts);
 });
 
@@ -29,18 +29,23 @@ const createContact = asyncHandler(async (request, response) => {
     name,
     email,
     phone,
+    user_id: request.user.id,
   });
 
   response.status(201).json(contact);
 });
 
 const updateContact = asyncHandler(async (request, response) => {
-  const contact = Contact.findById(request.params.id);
+  const contact = await Contact.findById(request.params.id);
   if (!contact) {
     response.status(404);
     throw new Error("Contact not Found");
   }
 
+  if (contact.user_id.toString() !== request.user.id) {
+    response.status(403);
+    throw new Error("This user is not authorized to update this contact");
+  }
   const updatedContact = await Contact.findByIdAndUpdate(
     request.params.id,
     request.body,
@@ -56,6 +61,11 @@ const deleteContact = asyncHandler(async (request, response) => {
     throw new Error("Contact not Found");
   }
 
+  if (contact.user_id.toString() !== request.user.id) {
+    response.status(403);
+    throw new Error("This user is not authorized to delete this contact");
+  }
+  
   response.status(200).json(contact);
 });
 
